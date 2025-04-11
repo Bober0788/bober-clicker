@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Клікер з магазином</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    .clicker-btn {
+      font-size: 30px;
+      padding: 20px 40px;
+      margin-top: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .shop {
+      margin-top: 30px;
+    }
+
+    .shop-item {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px auto;
+      width: 300px;
+      background-color: #fff;
+    }
+
+    button.upgrade-btn {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #2196F3;
+      color: white;
+      cursor: pointer;
+    }
+
+    .stats {
+      font-size: 20px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Клікер Бобра</h1>
+  <div class="stats">
+    Кліки: <span id="clicks">0</span><br>
+    Кліків за натиск: <span id="perClick">1</span>
+  </div>
+
+  <button class="clicker-btn" onclick="addClick()">Натисни мене!</button>
+
+  <div class="shop">
+    <h2>Магазин покращень</h2>
+    <div class="shop-item">
+      <strong>Покращення 1:</strong> +1 клік за натиск<br>
+      Ціна: <span id="upgrade1-cost">10</span>
+      <br>
+      <button class="upgrade-btn" onclick="buyUpgrade(1)">Купити</button>
+    </div>
+    <div class="shop-item">
+      <strong>Покращення 2:</strong> +5 кліків за натиск<br>
+      Ціна: <span id="upgrade2-cost">100</span>
+      <br>
+      <button class="upgrade-btn" onclick="buyUpgrade(2)">Купити</button>
+    </div>
+  </div>
+
+  <script>
+    // Початкові значення
+    let clicks = parseInt(localStorage.getItem("clicks")) || 0;
+    let perClick = parseInt(localStorage.getItem("perClick")) || 1;
+    let upgrade1Cost = parseInt(localStorage.getItem("upgrade1Cost")) || 10;
+    let upgrade2Cost = parseInt(localStorage.getItem("upgrade2Cost")) || 100;
+
+    function updateUI() {
+      document.getElementById("clicks").textContent = clicks;
+      document.getElementById("perClick").textContent = perClick;
+      document.getElementById("upgrade1-cost").textContent = upgrade1Cost;
+      document.getElementById("upgrade2-cost").textContent = upgrade2Cost;
+    }
+
+    function save() {
+      localStorage.setItem("clicks", clicks);
+      localStorage.setItem("perClick", perClick);
+      localStorage.setItem("upgrade1Cost", upgrade1Cost);
+      localStorage.setItem("upgrade2Cost", upgrade2Cost);
+    }
+
+    function addClick() {
+      clicks += perClick;
+      save();
+      updateUI();
+    }
+
+    function buyUpgrade(upgradeNumber) {
+      if (upgradeNumber === 1 && clicks >= upgrade1Cost) {
+        clicks -= upgrade1Cost;
+        perClick += 1;
+        upgrade1Cost = Math.floor(upgrade1Cost * 1.5);
+      } else if (upgradeNumber === 2 && clicks >= upgrade2Cost) {
+        clicks -= upgrade2Cost;
+        perClick += 5;
+        upgrade2Cost = Math.floor(upgrade2Cost * 1.8);
+      } else {
+        alert("Недостатньо кліків!");
+        return;
+      }
+
+      save();
+      updateUI();
+    }
+
+    // Оновлюємо інтерфейс при запуску
+    updateUI();
+  </script>
+
+</body>
+</html>
