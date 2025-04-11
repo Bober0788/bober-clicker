@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
@@ -25,6 +25,12 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .clicker-btn:hover {
+      background-color: #45a049;
+      transform: scale(1.1);
     }
 
     .shop {
@@ -38,6 +44,11 @@
       margin: 10px auto;
       width: 300px;
       background-color: #fff;
+      transition: background-color 0.3s ease;
+    }
+
+    .shop-item:hover {
+      background-color: #e1f5fe;
     }
 
     button.upgrade-btn {
@@ -53,6 +64,39 @@
     .stats {
       font-size: 20px;
       margin-top: 15px;
+    }
+
+    #shop {
+      padding: 20px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+
+    #skins {
+      margin-top: 20px;
+    }
+
+    .skin {
+      padding: 10px;
+      margin: 5px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .skin:hover {
+      background-color: #2980b9;
+      transform: scale(1.1);
+    }
+
+    #leaderboard {
+      margin-top: 40px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -82,33 +126,59 @@
     </div>
   </div>
 
+  <div id="shop">
+    <h2>Магазин скинів</h2>
+    <div id="skins">
+      <button class="skin" data-skin="skin1">Скин 1</button>
+      <button class="skin" data-skin="skin2">Скин 2</button>
+      <button class="skin" data-skin="skin3">Скин 3</button>
+    </div>
+    <p>Твій вибір: <span id="selected-skin">None</span></p>
+  </div>
+
+  <div id="leaderboard">
+    <h3>Лідерборд</h3>
+    <p>Кліки: <span id="leader-clicks">0</span></p>
+  </div>
+
+  <audio id="click-sound" src="click-sound.mp3" preload="auto"></audio>
+  <audio id="bg-music" src="background-music.mp3" preload="auto" loop></audio>
+
   <script>
     // Початкові значення
     let clicks = parseInt(localStorage.getItem("clicks")) || 0;
     let perClick = parseInt(localStorage.getItem("perClick")) || 1;
     let upgrade1Cost = parseInt(localStorage.getItem("upgrade1Cost")) || 10;
     let upgrade2Cost = parseInt(localStorage.getItem("upgrade2Cost")) || 100;
+    let selectedSkin = localStorage.getItem("selectedSkin") || 'None';
 
+    // Функція для оновлення UI
     function updateUI() {
       document.getElementById("clicks").textContent = clicks;
       document.getElementById("perClick").textContent = perClick;
       document.getElementById("upgrade1-cost").textContent = upgrade1Cost;
       document.getElementById("upgrade2-cost").textContent = upgrade2Cost;
+      document.getElementById("selected-skin").textContent = selectedSkin;
     }
 
+    // Функція для збереження даних у localStorage
     function save() {
       localStorage.setItem("clicks", clicks);
       localStorage.setItem("perClick", perClick);
       localStorage.setItem("upgrade1Cost", upgrade1Cost);
       localStorage.setItem("upgrade2Cost", upgrade2Cost);
+      localStorage.setItem("selectedSkin", selectedSkin);
     }
 
+    // Додавання кліка
     function addClick() {
       clicks += perClick;
       save();
       updateUI();
+      playSound('click-sound');
     }
 
+    // Купити покращення
     function buyUpgrade(upgradeNumber) {
       if (upgradeNumber === 1 && clicks >= upgrade1Cost) {
         clicks -= upgrade1Cost;
@@ -126,6 +196,26 @@
       save();
       updateUI();
     }
+
+    // Вибір скину
+    const skinButtons = document.querySelectorAll('.skin');
+    skinButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        selectedSkin = button.getAttribute('data-skin');
+        save();
+        updateUI();
+      });
+    });
+
+    // Звукові ефекти
+    function playSound(soundId) {
+      const sound = document.getElementById(soundId);
+      sound.play();
+    }
+
+    // Фонова музика
+    const bgMusic = document.getElementById("bg-music");
+    bgMusic.play();
 
     // Оновлюємо інтерфейс при запуску
     updateUI();
